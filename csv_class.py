@@ -1,20 +1,35 @@
 import pandas as pd
 
-class CsvProcessor:
-    def __init__(self,file_path: str):
-        self.file_path = file_path
+class ProcessadorCSV:
+    def __init__(self, arquivo_csv):
+        self.arquivo_csv = arquivo_csv
         self.df = None
-
+    
     def carregar_csv(self):
-        self.df = pd.read_csv(self.file_path)
-
-    def filtrar_por(self,coluna, atributo):
-        return self.df[self.df[coluna] == atributo]
+        # Carregar o arquivo CSV em um DataFrame
+        self.df = pd.read_csv(self.arquivo_csv)
+    
+    def remover_celulas_vazias(self):
+        # Verificar e remover células vazias
+        self.df = self.df.dropna()
+    
+    def filtrar_por_estado(self, estado):
+        # Filtrar as linhas pela coluna estado
+        self.df = self.df[self.df['estado'] == estado]
+    
+    def processar(self, estado):
+        # Carregar CSV, remover células vazias e filtrar por estado
+        self.carregar_csv()
+        self.remover_celulas_vazias()
+        self.filtrar_por_estado(estado)
         
-arquivo_csv = './exemplo.csv'
-filtro = 'estado'
-limite = 'SP'
+        return self.df
 
-arquivo_CSV = CsvProcessor(arquivo_csv)
-arquivo_CSV.carregar_csv()
-print(arquivo_CSV.filtrar_por(filtro,limite))
+# Exemplo de uso
+arquivo_csv = './exemplo.csv'  # substitua 'exemplo.csv' pelo caminho do seu arquivo CSV
+estado_filtrado = 'SP'  # estado que você quer filtrar
+
+processador = ProcessadorCSV(arquivo_csv)
+df_filtrado = processador.processar(estado_filtrado)
+
+print(df_filtrado)
